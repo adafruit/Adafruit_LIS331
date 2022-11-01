@@ -98,7 +98,7 @@ bool Adafruit_LIS331HH::begin_SPI(int8_t cs_pin, int8_t sck_pin,
  *   @returns True if chip identified and initialized
  */
 bool Adafruit_LIS331HH::_init(int32_t sensor_id) {
-
+  (void)sensor_id;
   uint8_t device_id = getDeviceID();
   /* Check connection */
   if (device_id != LIS331_CHIP_ID) {

@@ -12,7 +12,7 @@
  *  @param  TheWire
  *          optional wire object
  */
-Adafruit_LIS331::Adafruit_LIS331(TwoWire *TheWire) {}
+Adafruit_LIS331::Adafruit_LIS331(TwoWire *TheWire) { (void)TheWire; }
 
 /*!
  *   @brief  Instantiates a new LIS331 class using hardware SPI
@@ -21,7 +21,10 @@ Adafruit_LIS331::Adafruit_LIS331(TwoWire *TheWire) {}
  *   @param  *theSPI
  *           optional parameter contains spi object
  */
-Adafruit_LIS331::Adafruit_LIS331(int8_t cspin, SPIClass *theSPI) {}
+Adafruit_LIS331::Adafruit_LIS331(int8_t cspin, SPIClass *theSPI) {
+  (void)cspin;
+  (void)theSPI;
+}
 
 /*!
  *   @brief  Instantiates a new LIS331 class using software SPI
@@ -35,7 +38,12 @@ Adafruit_LIS331::Adafruit_LIS331(int8_t cspin, SPIClass *theSPI) {}
  *           number of pin used for CLK (clock pin)
  */
 Adafruit_LIS331::Adafruit_LIS331(int8_t cspin, int8_t mosipin, int8_t misopin,
-                                 int8_t sckpin) {}
+                                 int8_t sckpin) {
+  (void)cspin;
+  (void)mosipin;
+  (void)misopin;
+  (void)sckpin;
+}
 
 /*!
  *  @brief  Get Device ID from LIS331_REG_WHOAMI
@@ -108,6 +116,8 @@ bool Adafruit_LIS331::configIntDataReady(uint8_t irqnum, bool activelow,
     int2_bits.write(0b10);
     int1_bits.write(0);
   }
+
+  return true;
 }
 
 /**************************************************************************/
