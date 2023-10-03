@@ -1,12 +1,12 @@
 # Adafruit LIS331 [![Build Status](https://github.com/adafruit/Adafruit_LIS331/workflows/Arduino%20Library%20CI/badge.svg)](https://github.com/adafruit/Adafruit_LIS331/actions)[![Documentation](https://github.com/adafruit/ci-arduino/blob/master/assets/doxygen_badge.svg)](http://adafruit.github.io/Adafruit_LIS331/html/index.html)
 
-<a href="https://www.adafruit.com/product/4626"><img src="" width="500px" /></a>
+<a href="https://www.adafruit.com/product/4626"><img src="https://cdn-shop.adafruit.com/970x728/4627-00.jpg" width="500px" /></a>
 
 This is the Arduino library for the Adafruit LIS331 family of 3-axis Accelerometers.
 
 ## Supported Hardware
-* [LIS331HH High-g 3-Axis Accelerometer](https://www.adafruit.com/products/4XXX)
-* [H3LIS331 Very High-g 3-Axis Accelerometer](https://www.adafruit.com/products/4XXX)
+* [LIS331HH High-g 3-Axis Accelerometer](https://www.adafruit.com/product/4626)
+* [H3LIS331 Very High-g 3-Axis Accelerometer](https://www.adafruit.com/products/4627)
 
 This sensor communicates over I2C or SPI (our library code supports both) so you can share it with a bunch of other sensors on the same I2C bus.
 There's an address selection pin so you can have two accelerometers share an I2C bus.
