@@ -120,6 +120,143 @@ bool Adafruit_LIS331::configIntDataReady(uint8_t irqnum, bool activelow,
   return true;
 }
 
+/**
+ * @brief configure the interrupt reset to be latched or not
+ *
+ * @param irqnum The interrupt number/pin to configure
+ * @param latched Latch interrupt request on INT1/2_SRC register, with INT1/2_SRC register cleared by reading INT1/2_SRC register
+ */
+  void Adafruit_LIS331::setIntLatched(uint8_t irqnum, bool latched){
+      Adafruit_BusIO_Register ctrl3_reg = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LIS331_REG_CTRL3, 1);
+
+  Adafruit_BusIO_RegisterBits int1_latched_pin =
+      Adafruit_BusIO_RegisterBits(&ctrl3_reg, 1, 1);
+  Adafruit_BusIO_RegisterBits int2_latched_pin =
+      Adafruit_BusIO_RegisterBits(&ctrl3_reg, 1, 5);
+
+  if (irqnum == 1) {
+    int1_latched_pin.write(latched);
+  } else if(irqnum == 2){
+    int2_latched_pin.write(latched);
+  }
+
+  }
+
+
+/**
+ * @brief Sets the threshold to fire an interrupt
+ *
+ * @param irqnum The interrupt number/pin to configure
+ * @param threshold The threshold to set
+ */
+void Adafruit_LIS331::setIntThreshold(uint8_t irqnum, uint16_t threshold) {
+  Adafruit_BusIO_Register _ths1 = Adafruit_BusIO_Register(i2c_dev, spi_dev,
+      ADDRBIT8_HIGH_TOREAD, LIS331_REG_INT1THS, 1);
+  Adafruit_BusIO_Register _ths2 = Adafruit_BusIO_Register(i2c_dev, spi_dev,
+      ADDRBIT8_HIGH_TOREAD, LIS331_REG_INT2THS, 1);
+
+  Adafruit_BusIO_RegisterBits ths1_bits = Adafruit_BusIO_RegisterBits(&_ths1,
+      7, 0);
+  Adafruit_BusIO_RegisterBits ths2_bits = Adafruit_BusIO_RegisterBits(&_ths2,
+      7, 0);
+
+  if (irqnum == 1) {
+    ths1_bits.write(threshold);
+  } else if (irqnum == 2) {
+    ths2_bits.write(threshold);
+  }
+
+}
+
+/**
+ * @brief Sets the duration for wich a condition has to occur to fire an interrupt
+ *
+ * @param irqnum The interrupt number/pin to configure
+ * @param duration the duration to set
+ */
+void Adafruit_LIS331::setIntDuration(uint8_t irqnum, uint16_t duration) {
+  Adafruit_BusIO_Register _dur1 = Adafruit_BusIO_Register(i2c_dev, spi_dev,
+      ADDRBIT8_HIGH_TOREAD, LIS331_REG_INT1DUR, 1);
+  Adafruit_BusIO_Register _dur2 = Adafruit_BusIO_Register(i2c_dev, spi_dev,
+      ADDRBIT8_HIGH_TOREAD, LIS331_REG_INT2DUR, 1);
+
+  Adafruit_BusIO_RegisterBits dur1_bits = Adafruit_BusIO_RegisterBits(&_dur1,
+      7, 0);
+  Adafruit_BusIO_RegisterBits dur2_bits = Adafruit_BusIO_RegisterBits(&_dur2,
+      7, 0);
+
+  if (irqnum == 1) {
+    dur1_bits.write(duration);
+  } else if (irqnum == 2) {
+    dur2_bits.write(duration);
+  }
+}
+
+/**
+ * @brief Configure INT1_CFG or INT2_CFG
+ *
+ * @param irqnum The interrupt number/pin to configure
+ * @param AOI AND/OR combination of Interrupt events
+ * @param _6D 6 direction detection function enable
+ * @param 6 bits to enable individual interrupt generation on hi/lo threshold events for each axis.
+ *        0b00 ZHIE ZLIE YHIE YLIE XHIE XLIE (see datasheet page 30 for LIS331HH)
+ */
+void Adafruit_LIS331::configInterrupt(uint8_t irqnum, bool AOI, bool _6D, uint8_t axisflags) {
+  Adafruit_BusIO_Register _cfg1 = Adafruit_BusIO_Register(i2c_dev, spi_dev,
+      ADDRBIT8_HIGH_TOREAD, LIS331_REG_INT1CFG, 1);
+  Adafruit_BusIO_Register _cfg2 = Adafruit_BusIO_Register(i2c_dev, spi_dev,
+      ADDRBIT8_HIGH_TOREAD, LIS331_REG_INT2CFG, 1);
+
+  Adafruit_BusIO_RegisterBits cfg1_source_bits = Adafruit_BusIO_RegisterBits(
+      &_cfg1, 2, 6);
+  Adafruit_BusIO_RegisterBits cfg2_source_bits = Adafruit_BusIO_RegisterBits(
+      &_cfg2, 2, 6);
+  Adafruit_BusIO_RegisterBits cfg1_axis_enable_bits =
+      Adafruit_BusIO_RegisterBits(&_cfg1, 6, 0);
+  Adafruit_BusIO_RegisterBits cfg2_axis_enable_bits =
+      Adafruit_BusIO_RegisterBits(&_cfg2, 6, 0);
+
+  if (irqnum == 1) {
+    cfg1_source_bits.write((AOI << 1) | (_6D));
+    cfg1_axis_enable_bits.write(axisflags);
+
+  } else if (irqnum == 2) {
+    cfg2_source_bits.write((AOI << 1) | (_6D));
+    cfg2_axis_enable_bits.write(axisflags);
+  }
+}
+
+
+/**
+ * @brief read the source of an interrupt (important for latched interrupt generation)
+ *
+ * @param irqnum The interrupt number/pin to configure
+ * @return the content of the src register
+ */
+uint8_t Adafruit_LIS331::getInterruptSrc(uint8_t irqnum) {
+  Adafruit_BusIO_Register _src1 = Adafruit_BusIO_Register(i2c_dev, spi_dev,
+      ADDRBIT8_HIGH_TOREAD, LIS331_REG_INT1SRC, 1);
+  Adafruit_BusIO_Register _src2 = Adafruit_BusIO_Register(i2c_dev, spi_dev,
+      ADDRBIT8_HIGH_TOREAD, LIS331_REG_INT2SRC, 1);
+
+  Adafruit_BusIO_RegisterBits int1_source_bits = Adafruit_BusIO_RegisterBits(
+      &_src1, 7, 0);
+  Adafruit_BusIO_RegisterBits int2_source_bits = Adafruit_BusIO_RegisterBits(
+      &_src2, 7, 0);
+
+
+  if (irqnum == 1) {
+    return (uint8_t) int1_source_bits.read();
+
+  } else if (irqnum == 2) {
+    return (uint8_t) int2_source_bits.read();
+  } else
+    return 0;
+
+}
+
+
 /**************************************************************************/
 /*!
     @brief Enables the high pass filter and/or slope filter
