@@ -138,6 +138,12 @@ public:
   bool configIntDataReady(uint8_t irqnum = 1, bool activelow = true,
                           bool opendrain = true);
 
+  void setIntLatched(uint8_t irqnum = 1, bool latched = false);
+  void setIntThreshold(uint8_t irqnum, uint16_t threshold);
+  void setIntDuration(uint8_t irqnum, uint16_t duration = 0x0);
+  void configInterrupt(uint8_t irqnum, bool AOI=0, bool _6D=0, uint8_t axisflags = 0b000000);
+  uint8_t getInterruptSrc(uint8_t irqnum);
+
   void read(void);
 
   bool getEvent(sensors_event_t *event);
